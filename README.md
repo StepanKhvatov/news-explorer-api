@@ -1,1 +1,1 @@
-# news-explorer-api
+# Api для дипломной работы news-explorer
