@@ -1,32 +1,57 @@
+require('dotenv').config();
+const cors = require('cors');
+const helmet = require('helmet');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const rateLimit = require('express-rate-limit');
-const cors = require('cors');
+const { limiter } = require('./utils/rateLimiter');
+const { dataBaseSettings } = require('./utils/constants');
+const { createUser, login } = require('./controllers/users');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { signUpValidation, signInValidation } = require('./celebrateValidation/auth');
+const NotFoundError = require('./errors/NotFoundError(404).js');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001, MONGODB_LINK } = process.env;
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
+const users = require('./routes/users');
+const articles = require('./routes/articles');
 
-mongoose.connect('mongodb://localhost:27017/news-explorer-db', {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true,
-});
+const auth = require('./middlewares/auth');
+
+mongoose.connect(MONGODB_LINK, dataBaseSettings);
 
 const app = express();
 
 app.use(cors());
 
+app.use(helmet());
+
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(requestLogger);
+
 app.use(limiter);
+
+app.post('/signup', signUpValidation, createUser);
+
+app.post('/signin', signInValidation, login);
+
+app.use(auth);
+
+app.use(users);
+
+app.use(articles);
+
+app.use(errorLogger);
+
+app.use(() => {
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
+});
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => res.status(err.status || 500).send({ message: err.message }));
 
 app.listen(PORT, () => {
   console.log(`Port ${PORT}`);
