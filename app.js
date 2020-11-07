@@ -11,14 +11,14 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { signUpValidation, signInValidation } = require('./celebrateValidation/auth');
 const NotFoundError = require('./errors/NotFoundError(404).js');
 
-const { PORT = 3000, MONGODB_LINK } = process.env;
+const { PORT = 3000, MONGODB_LINK = 'mongodb://localhost:27017/news-explorer-db' } = process.env;
 
 const users = require('./routes/users');
 const articles = require('./routes/articles');
 
 const auth = require('./middlewares/auth');
 
-mongoose.connect(String(MONGODB_LINK), dataBaseSettings);
+mongoose.connect(MONGODB_LINK, dataBaseSettings);
 
 const app = express();
 
