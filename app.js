@@ -18,7 +18,7 @@ const articles = require('./routes/articles');
 
 const auth = require('./middlewares/auth');
 
-mongoose.connect(String(MONGODB_LINK), dataBaseSettings);
+mongoose.connect(`${MONGODB_LINK}`, dataBaseSettings);
 
 const app = express();
 
