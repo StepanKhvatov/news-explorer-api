@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { limiter } = require('./utils/rateLimiter');
+// const { limiter } = require('./utils/rateLimiter');
 const { dataBaseSettings } = require('./utils/constants');
 const { createUser, login } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
 
-app.use(limiter);
+// app.use(limiter);
 
 app.post('/signup', signUpValidation, createUser);
 
