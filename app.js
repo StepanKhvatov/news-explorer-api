@@ -1,5 +1,5 @@
 require('dotenv').config();
-// const cors = require('cors');
+const cors = require('cors');
 const helmet = require('helmet');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -16,13 +16,13 @@ const { PORT = 3000, MONGODB_LINK = 'mongodb://localhost:27017/news-explorer-db'
 const users = require('./routes/users');
 const articles = require('./routes/articles');
 
-const auth = require('./middlewares/auth');
-
 mongoose.connect(MONGODB_LINK, dataBaseSettings);
 
 const app = express();
 
-// app.use(cors());
+app.use(cors());
+
+const auth = require('./middlewares/auth');
 
 app.use(helmet());
 
